@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        
+        /* Create two equal columns that floats next to each other */
+        .column {
+          float: left;
+          width: 50%;
+          padding: 10px;
+          height: 300px; /* Should be removed. Only for demonstration */
+        }
+        
+        /* Clear floats after the columns */
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            width: 90%;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+
+        .container {
+            padding: 2px 16px;
+        }
+        .button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        .submitbutton {
+            background-color: blue; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        .signoutbutton {
+            background-color: black; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        .searchbox {
+            background-color: white;
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            padding-left: 40px;
+            height: 20px;
+        }
+        input[type=text], textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px -8px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        </style>
+	<title>Dashboard</title>
+</head>
+
+<body>
+	<h1>Hi <%= userName %>, welcome to your dashboard</h1>
+    <div class="row">
+        <div class="column">
+            <div class="card">
+                <form action="/userSearch" method="POST">
+                    <input id="searchString" type="text" name="searchString" value="" class="searchbox">
+                    <button type="submit" class="button">Search Users by UserName</button>
+                </form>
+                <div >
+                    <% if (searchUsers && searchUsers != "no user found") { %>
+                        <div style="overflow: scroll; height: 100px;">
+                            <table>
+                            <tr><th>User name</th></tr>
+                            <% searchUsers.forEach((items) => { %>
+                                <tr><td><%= items %></td></tr>
+                            <% }) %>
+                            </table>
+                        </div>
+                    <% } else if (searchUsers && searchUsers == "no user found") { %>
+                        <%= searchUsers %>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class = "card">
+                <form action="/post" method="POST" enctype="multipart/form-data">
+                    <div>
+                        <b><label for="text">Type whats on your mind</label></b>
+                        <textarea id="text" name="text" value="" rows="2"
+                                placeholder="Whats on your mind" required>
+                        </textarea>
+                    </div>
+                    <div>
+                        <label for="image">Upload Image</label>
+                        <input type="file" id="image"
+                            name="image" value=""><br>
+                        <button type="submit" class="submitbutton">Post</button>
+                        <br>
+                        <% if (postValidation) { %>
+                            <%= postValidation %>
+                        <% } %>
+                    </div>
+                </form>
+            </div>
+            <h2>My Posts</h2>
+            <div>
+                <% for(let i = posts.length - 1 ; i >= 0 ; i--){ %>
+                    <div class = "card">
+                        <% var item = posts[i]; %>
+                        <% if (item.imageLocation != "") { %>
+                            <img src=<%= item.imageLocation %> alt="--Image--" style="width:100%"><br>
+                        <% } %> <br>
+                        <div class = "container">
+                            <% if (item.text != "") { %>
+                                <%= item.text %> <br>
+                            <% } %>
+                        </div>
+                        <form action="/share" method="post">
+                            <label for="shareWithUserId"></label>
+                            <input type="text" id="shareWithUserId" name="shareWithUserId" value="" required>
+                            <input type="hidden" id="sharePostId" name="sharePostId" value=<%= item.postId %> >
+                            <% if (item.shareValidation != null && item.shareValidation != 0) { %>
+                                <br><%= item.shareValidation %><br>
+                            <% } else if(item.shareValidation == 0) { %>
+                                <br>invalid username provided<br>
+                            <% } %>
+                            
+                            <button type="submit" class="button">Share</button>
+                        </form>
+                    </div>
+                    <br>
+                <% } %>
+            </div>
+
+            
+
+
+            
+
+
+            <div>
+                <form action="/signout" method="POST">
+                    <button type="submit" class="signoutbutton">SignOut</button>
+                </form>
+            </div>
+        </div>
+        <div class="column">
+            <h2>Shared with me</h2>
+                <form action="/dashboardRefresh" method="post"><button class="button" type="submitbutton">Refresh</button></form>
+
+                <% for(let i = sharedPosts.length - 1 ; i >= 0 ; i --){ %>
+                    <div class="card">
+                        <% var item = sharedPosts[i]; %>
+                        shared by <%= item.ownerId %>
+                        <% if (item.imageLocation && item.imageLocation != "") { %>
+                            <img src=<%= item.imageLocation %> alt="--Image--" style="width:100%"><br>
+                            
+                        <% } %>
+                        <br>
+                        <div class="container">
+                            <% if (item.text != "") { %>
+                                <%= item.text %> <br>
+                            <% } %>
+                        </div>
+                        
+                    </div><br>
+                    
+                <% } %>
+
+
+
+        </div>
+    </div>
+</body>
+
+</html>
+

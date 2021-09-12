@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sign up</title>
+    <style>
+		.card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            width: 50%;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+
+        .container {
+            padding: 2px 16px;
+        }
+        .button {
+            background-color: blue; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+        input[type=text], .textArea{
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px -8px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+	</style>
+</head>
+
+<body>
+	<h1>Sign-up</h1>
+	<div class="card">
+		<form action="/registerUser" method="POST">
+			<div>
+				<label for="userName">UserName</label>
+				<input type="text" id="userName" placeholder="userName"
+					value="" name="userName" required>
+			</div>
+			<div>
+				<label for="password">Password</label>
+				<input type="password" id = "password" placeholder="password" value="" name = "password" class="textArea" required>
+			</div>
+			
+			<div>
+				<button type="submit" class="button">Submit</button>
+			</div>
+
+            <div>
+                <% if(error != "0"){%>
+					<%= error %>
+				<% } %>
+                <% if(success != "0"){ %>
+                    <%= success %>
+                <% } %>
+            </div>
+		</form>
+        <form action="/" method="get"><button type="submit" class="button">Home</button></form>
+	</div>
+
+</body>
+
+</html>
+
