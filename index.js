@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
-var router = require('../contentWebSite/routes/router');
+var router = require('/routes/router.js');
 
 
 
